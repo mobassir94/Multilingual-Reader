@@ -50,7 +50,7 @@ pip install --no-binary protobuf protobuf
 - [x] pipe arabic recognizer paddle
 - [x] line and word based document sorting
 
-![ ](/tests/issue_check.png)
+![ ](/docs/issue_check.png)
 
 - [ ] integrate classifier model
 - [ ] bangla recognizer: 
@@ -63,7 +63,7 @@ pip install --no-binary protobuf protobuf
 
 **current state**:
 
-![](/tests/cs.png)
+![](/docs/cs.png)
 
 
 
