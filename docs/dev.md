@@ -7,7 +7,8 @@
 - [x] line and word based document sorting
 - [x] requirement versioning
 - [x] integrate classifier model
-- [ ] inverse arabic order
+- [x] inverse arabic order text
+- [ ] stride problem with cropping
 - [x] bangla recognizer: 
     - [x] base version(temporary): easyocr integration with freelist crops (integrate easyocr and paddleocr)
     - [ ] cluster version (temporary): word modification and cleaning pipeline
