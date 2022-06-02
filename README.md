@@ -16,34 +16,16 @@ Gnome       : 3.36.8
 ```
 
 **python requirements**
-
-* **pip requirements**: ```pip install -r requirements.txt``` 
-
-> Its better to use a virtual environment 
-> OR use conda-
-
-* **conda**: use environment.yml: ```conda env create -f environment.yml```
-
 * dev - cpu - test -install 
+> stable test environment 
 
-> stable test environment : conda
-
+* Manual Setup
 ```python
-pip install termcolor
-pip install ipykernel
-pip install paddlepaddle
-pip install paddleocr
-pip uninstall protobuf
-pip install --no-binary protobuf protobuf
-pip install gdown
-conda install pytorch torchvision cpuonly -c pytorch
-pip install onnxruntime
-python3 -m ipykernel install --user --name mlreader
+conda create -n mlreader python=3.8  -y
+conda activate mlreader
+conda install -n mlreader ipykernel --update-deps --force-reinstall -y
+./install.sh
 ```
-**UNSTABLE DEV ENV AFTER torch and onnxruntime**: 
-* could be memory issue
-* conflict for torch and paddle??
-
 # Stack
 * Line based detector model: ```paddleOCR en-dbnet```
 * Word based detector model: ```paddleOCR ml-dbnet```
@@ -60,7 +42,6 @@ python3 -m ipykernel install --user --name mlreader
 - [x] merging solved 
 - [x] lang model auto download
 - [x] classifier addition
-- [ ] 
 
 # Docs
 * ```docs/dev.md```: dev branch doc
