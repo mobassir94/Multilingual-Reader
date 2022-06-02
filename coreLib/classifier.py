@@ -23,7 +23,7 @@ class LangClassifier(object):
                 img_dim=384,
                 graph_input="input",
                 labels=["ar","bn","en"],
-                batch_size=32):
+                batch_size=8):
         self.img_dim=img_dim
         self.graph_input=graph_input
         self.model = ort.InferenceSession(model_weights, providers=providers)
@@ -36,7 +36,7 @@ class LangClassifier(object):
     def batch_infer(self,imgs):
         inps=[]
         for img in imgs:
-            inp = self.transform(img)
+            inp = self.transform(img.copy())
             inp = inp.unsqueeze(0)
             inps.append(inp)
         inp_batch=torch.cat(inps)

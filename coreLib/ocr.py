@@ -10,6 +10,7 @@ from .utils import localize_box,LOG_INFO,download
 from .rotation import auto_correct_image_orientation
 from .detector import Detector
 from .classifier import LangClassifier
+from .recog import BanOCR
 
 from paddleocr import PaddleOCR
 import os
@@ -22,6 +23,7 @@ import pandas as pd
 #-------------------------
 # class
 #------------------------
+
 class MultilingualReader(object):
     def __init__(self,
                  lang_onnx="weights/lang.onnx",
@@ -34,6 +36,9 @@ class MultilingualReader(object):
             download(lang_gid,lang_onnx)
         self.lang=LangClassifier(lang_onnx)
         LOG_INFO("Loaded Language classifier")
+        self.bocr=BanOCR()
+        LOG_INFO("Loaded EasyOCR BN(Temporary)")
+        
 
         
 
@@ -58,7 +63,7 @@ class MultilingualReader(object):
 
         return image,rot_info
 
-    def process_boxes(self,word_boxes,line_boxes,crops):
+    def process_boxes(self,word_boxes,line_boxes):
         # line_boxes
         line_orgs=[]
         line_refs=[]
@@ -105,30 +110,59 @@ class MultilingualReader(object):
             _bids=ldf.word_ids.tolist()
             _,bids=zip(*sorted(zip(_boxes,_bids),key=lambda x: x[0][0]))
             for idx,bid in enumerate(bids):
-                _dict={"line_no":line,"word_no":idx,"crop_id":bid,"crop":crops[bid],"box":word_boxes[bid]}
+                _dict={"line_no":line,"word_no":idx,"crop_id":bid,"poly":word_boxes[bid]}
                 text_dict.append(_dict)
-        return text_dict
-            
+        data=pd.DataFrame(text_dict)
+        return data,text_dict
+
+
     def __call__(self,img_path,exec_rot=False):
         executed=[]
         # -----------------------start-----------------------
         img=cv2.imread(img_path)
         img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-        print("read")
         # orientation
         if exec_rot:
             img,rot_info=self.execite_rotation_fix(img)
             executed.append(rot_info)
         # text detection
         line_boxes,_=self.det.detect(img,self.line_en)
-        print("line")
-        
         word_boxes,crops=self.det.detect(img,self.word_ar)
-        print("word")
-        # grounding
-        #-------------------------------------------------v1-debug
-        #text_dict=self.process_boxes(word_boxes,line_boxes,crops)
-        #return img,text_dict
+        # line-word sorting
+        df,text_dict=self.process_boxes(word_boxes,line_boxes)
+        # language classification
+        cids=df.crop_id.tolist()
+        word_crops=[crops[i] for i  in cids]
+        langs=self.lang(word_crops)
+        df["lang"]=langs 
+        # language division
+        adf=df.loc[df.lang=="ar"]
+        bdf=df.loc[df.lang=="bn"]
+        edf=df.loc[df.lang=="en"]
+
+        #--------------------------------english------------------------------------
+        en_ids=edf.crop_id.tolist()
+        if len(en_ids)>0:
+            en_crops=[crops[idx] for idx in en_ids]
+            res_eng = self.line_en.ocr(en_crops,det=False,cls=True)
+            en_text=[i for i,_ in res_eng]
+            edf["text"]=en_text
+        #--------------------------------arabic------------------------------------
+        ar_ids=adf.crop_id.tolist()
+        if len(ar_ids)>0:
+            ar_crops=[crops[idx] for idx in ar_ids]
+            res_arb = self.word_ar.ocr(ar_crops,det=False,cls=True)
+            ar_text=[i for i,_ in res_arb]
+            adf["text"]=ar_text
+        #--------------------------------bangla------------------------------------
+        bn_ids=bdf.crop_id.tolist()
+        if len(bn_ids)>0:
+            bn_boxes=[word_boxes[idx] for idx in bn_ids]
+            bn_text=self.bocr(img,bn_boxes)
+            bdf["text"]=bn_text
+
+        df=pd.concat([edf,adf,bdf],ignore_index=True)
+        return img,df,text_dict
 
         
         

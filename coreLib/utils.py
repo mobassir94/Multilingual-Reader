@@ -192,7 +192,7 @@ def draw_boxes_from_text_dict(image,text_dict):
     for crop_dict in text_dict:
         ln=crop_dict["line_no"]
         wn=crop_dict["word_no"]
-        box=crop_dict["box"]
+        box=crop_dict["poly"]
         box = np.reshape(np.array(box), [-1,1,2]).astype(np.int64)
         image = cv2.polylines(image, [box], True,(255,0,0),2)
         x,y=box[0][0]

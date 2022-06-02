@@ -31,6 +31,7 @@ conda install -n mlreader ipykernel --update-deps --force-reinstall -y
 * Word based detector model: ```paddleOCR ml-dbnet```
 * English recognizer: ```paddleocr - en -SVTR_LCnet```
 * Arabic recognizer: ```paddleocr - ar``` 
+* Bangla recognizer: ```easyocr - bn```
 * Word classifier : Custom 
     * [Kaggle Dataset Link](https://www.kaggle.com/datasets/mobassir/multilingual-document-images)
     * [onnx conversion kernel](https://www.kaggle.com/code/nazmuddhohaansary/batchonnx/notebook)
@@ -42,7 +43,13 @@ conda install -n mlreader ipykernel --update-deps --force-reinstall -y
 - [x] merging solved 
 - [x] lang model auto download
 - [x] classifier addition
+- [x] solved negative stride issue
 
 # Docs
 * ```docs/dev.md```: dev branch doc
 * ```weights/weights.md```: custom weights integration doc
+
+# Demo
+* see : ```demo.ipynb```
+
+![ ](/docs/baseV.png)
