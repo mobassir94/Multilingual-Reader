@@ -12,6 +12,7 @@ import os
 import cv2 
 import numpy as np
 from PIL import Image, ImageEnhance
+import gdown
 #---------------------------------------------------------------
 def LOG_INFO(msg,mcolor='blue'):
     '''
@@ -33,6 +34,10 @@ def create_dir(base,ext):
     if not os.path.exists(_path):
         os.mkdir(_path)
     return _path
+
+def download(id,save_dir):
+    gdown.download(id=id,output=save_dir,quiet=False)
+
 #------------------------------------
 # region-utils 
 #-------------------------------------
@@ -201,3 +206,5 @@ def draw_boxes(image,boxes):
         image = cv2.polylines(image, [box], True,(255,0,0),2)
         image = cv2.putText(image,str(idx),(x,y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 1, cv2.LINE_AA)
     return image
+
+    

@@ -26,44 +26,42 @@ Gnome       : 3.36.8
 
 * dev - cpu - test -install 
 
-> stable test environment 
+> stable test environment : conda
 
 ```python
 pip install termcolor
+pip install ipykernel
 pip install paddlepaddle
 pip install paddleocr
 pip uninstall protobuf
 pip install --no-binary protobuf protobuf
+pip install gdown
+conda install pytorch torchvision cpuonly -c pytorch
+pip install onnxruntime
+python3 -m ipykernel install --user --name mlreader
 ```
+**UNSTABLE DEV ENV AFTER torch and onnxruntime**: 
+* could be memory issue
+* conflict for torch and paddle??
+
+# Stack
+* Line based detector model: ```paddleOCR en-dbnet```
+* Word based detector model: ```paddleOCR ml-dbnet```
+* English recognizer: ```paddleocr - en -SVTR_LCnet```
+* Arabic recognizer: ```paddleocr - ar``` 
+* Word classifier : Custom 
+    * [Kaggle Dataset Link](https://www.kaggle.com/datasets/mobassir/multilingual-document-images)
+    * [onnx conversion kernel](https://www.kaggle.com/code/nazmuddhohaansary/batchonnx/notebook)
+    * [training kernel](/mlt_words/WordImage_LANG_Classifier_pytorch.ipynb)
 
 
+# Change-log (Dev branch)
+### 02-06-22
+- [x] merging solved 
+- [x] lang model auto download
+- [x] classifier addition
+- [ ] 
 
-# TODO (Dev branch)
-
-**entry from**: ```test.ipynb```
-
-- [ ] requirement versioning:
-    - [ ] remove local cached versions
-    - [ ] fix conda repo
-
-- [x] pipe english recognizer paddle
-- [x] pipe arabic recognizer paddle
-- [x] line and word based document sorting
-
-![ ](/docs/issue_check.png)
-
-- [ ] integrate classifier model
-- [ ] bangla recognizer: 
-    - [ ] base version(temporary): easyocr integration with freelist crops (integrate easyocr and paddleocr)
-    - [ ] cluster version (temporary): word modification and cleaning pipeline
-- [ ] ```text_dict``` as universal call variable
-    - [x] line based sort visualization 
-    - [x] filter false word dets with line=-1 iden
-    - [ ] chnage final text_dict as a line - word query: ```text_dict[line_no][word_no]={"crop":image,"box":free-format-location,"lang":language,"text":text}```
-
-**current state**:
-
-![](/docs/cs.png)
-
-
-
+# Docs
+* ```docs/dev.md```: dev branch doc
+* ```weights/weights.md```: custom weights integration doc
